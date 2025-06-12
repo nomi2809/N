@@ -1,0 +1,120 @@
+<!DOCTYPE html><html>
+<head>
+  <title>Link Generator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    .box {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    #mainContent {
+      display: none;
+    }
+  </style>
+</head>
+<body><div class="box">
+  <div id="passwordSection">
+    <h3>Enter Access Password</h3>
+    <input type="password" id="passInput" placeholder="Enter password">
+    <button onclick="checkPassword()">Submit</button>
+  </div>  <div id="mainContent">
+    <h2>Create Short Link</h2>
+    <input type="text" id="oglink" placeholder="Enter original link">
+    <input type="text" id="alias" placeholder="Enter custom alias">
+    <input type="text" id="name" placeholder="Enter name">
+    <button onclick="generateLink()">Generate Link</button>
+    <p id="result"></p><h3>Generated Links</h3>
+<table id="linkTable">
+  <thead>
+    <tr><th>Name</th><th>OG Link</th><th>Short Link</th></tr>
+  </thead>
+  <tbody id="linkBody"></tbody>
+</table>
+
+  </div>
+</div><script>
+  const PASSWORD = "1234"; // Set your password here
+
+  function checkPassword() {
+    const input = document.getElementById("passInput").value;
+    if (input === PASSWORD) {
+      document.getElementById("passwordSection").style.display = "none";
+      document.getElementById("mainContent").style.display = "block";
+    } else {
+      alert("Incorrect password");
+    }
+  }
+
+  async function generateLink() {
+    const oglink = document.getElementById("oglink").value;
+    const alias = document.getElementById("alias").value;
+    const name = document.getElementById("name").value;
+    const redirectURL = `https://yourblog.blogspot.com/p/so.html?${encodeURIComponent(oglink)}`;
+
+    try {
+      const res = await fetch(`https://tny.sh/api/short?link=${encodeURIComponent(redirectURL)}&alias=${encodeURIComponent(alias)}`);
+      const data = await res.json();
+      if (data.short) {
+        document.getElementById("result").innerHTML = `<strong>Shortened:</strong> <a href='${data.short}' target='_blank'>${data.short}</a>`;
+
+        // Save to table
+        const table = document.getElementById("linkBody");
+        const row = table.insertRow();
+        row.insertCell(0).innerText = name;
+        row.insertCell(1).innerText = oglink;
+        row.insertCell(2).innerHTML = `<a href='${data.short}' target='_blank'>${data.short}</a>`;
+
+        // Store in localStorage
+        const all = JSON.parse(localStorage.getItem("links") || "[]");
+        all.push({name, oglink, short: data.short});
+        localStorage.setItem("links", JSON.stringify(all));
+      } else {
+        alert("Failed to shorten link");
+      }
+    } catch (e) {
+      alert("Error occurred");
+    }
+  }
+
+  // Load previous
+  window.onload = function() {
+    const saved = JSON.parse(localStorage.getItem("links") || "[]");
+    const table = document.getElementById("linkBody");
+    for (const item of saved) {
+      const row = table.insertRow();
+      row.insertCell(0).innerText = item.name;
+      row.insertCell(1).innerText = item.oglink;
+      row.insertCell(2).innerHTML = `<a href='${item.short}' target='_blank'>${item.short}</a>`;
+    }
+  }
+</script></body>
+</html>
