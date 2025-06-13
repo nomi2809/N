@@ -1,0 +1,50 @@
+
+<style>
+  #link-tool {
+    max-width: 800px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  input, button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  button {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+  th {
+    background: #007bff;
+    color: white;
+  }
+</style><div id="link-tool">
+  <input type="password" id="pwd" placeholder="Enter Password">
+  <button onclick="login()">Unlock</button>  <div id="main" style="display:none;">
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="text" id="oglink" placeholder="Enter Original Link">
+    <input type="text" id="alias" placeholder="Optional Alias">
+    <button onclick="generateAndSave()">Generate Link</button>
+    <p id="result"></p>
+    <input type="text" id="search" oninput="filterTable()" placeholder="Search...">
+    <button onclick="loadLog()">🔁 View All</button>
+    <div id="log"></div>
+  </div>
+</div><script src="https://nomi2809.github.io/N/nk.js">
